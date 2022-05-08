@@ -4,6 +4,7 @@ import { formatDateEnUs } from "../../../../core/helpers/date-utils";
 import { ActiveIssuesComponent } from "../../components/active-issues/active-issues";
 import { DashboardService } from "../../services/dashboard.service";
 import { StatusCounts } from "../../models";
+import { Button } from '@progress/kendo-react-buttons';
 
 
 interface DateRange {
@@ -94,9 +95,9 @@ export class DashboardPage extends React.Component<any, DashboardPageState> {
 
                     <div className="btn-toolbar mb-2 mb-md-0">
                         <div className="btn-group mr-2">
-                            <button type="button" className="btn btn-sm btn-outline-secondary" onClick={(e) => this.onMonthRangeTap(3)}>3 Months</button>
-                            <button type="button" className="btn btn-sm btn-outline-secondary" onClick={(e) => this.onMonthRangeTap(6)}>6 Months</button>
-                            <button type="button" className="btn btn-sm btn-outline-secondary" onClick={(e) => this.onMonthRangeTap(12)}>1 Year</button>
+                            <Button type="button" fillMode="flat" className="btn btn-sm btn-outline-secondary" onClick={(e) => this.onMonthRangeTap(3)}>3 Months</Button>
+                            <Button type="button" className="btn btn-sm btn-outline-secondary" onClick={(e) => this.onMonthRangeTap(6)}>6 Months</Button>
+                            <Button type="button" className="btn btn-sm btn-outline-secondary" onClick={(e) => this.onMonthRangeTap(12)}>1 Year</Button>
                         </div >
 
                     </div >
