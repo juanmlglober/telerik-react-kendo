@@ -1,8 +1,12 @@
 import React from "react"
 
 import { Input, TextArea } from "@progress/kendo-react-inputs"
-// ES2015 module syntax
-import { DropDownList } from "@progress/kendo-react-dropdowns"
+import {
+  Grid,
+  GridColumn,
+  GridCell,
+  GridCellProps
+} from "@progress/kendo-react-grid"
 
 import { BacklogService } from "../../services/backlog.service"
 import { BacklogRepository } from "../../repositories/backlog.repository"
@@ -14,7 +18,7 @@ import { ItemType } from "../../../../core/constants"
 import "./backlog-page.css"
 
 import { AppPresetFilter } from "../../../../shared/components/preset-filter/preset-filter"
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap"
+import { Modal, ModalBody, ModalFooter, Button } from "reactstrap"
 import { PtNewItem } from "../../../../shared/models/dto/pt-new-item"
 import { EMPTY_STRING } from "../../../../core/helpers"
 import { getIndicatorClass } from "../../../../shared/helpers/priority-styling"
@@ -134,12 +138,17 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
           onClick={(e) => this.listItemTap(i)}
         >
           <td>
-            <img src={this.getIndicatorImage(i)} className="backlog-icon" />
+            <img
+              src={this.getIndicatorImage(i)}
+              className="backlog-icon"
+              alt="img"
+            />
           </td>
           <td>
             <img
               src={i.assignee.avatar}
               className="li-avatar rounded mx-auto d-block"
+              alt="img"
             />
           </td>
           <td>
@@ -164,7 +173,6 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
         </tr>
       )
     })
-    const sizes = [ "X-Small", "Small", "Medium", "Large", "X-Large", "2X-Large" ];
     return (
       <React.Fragment>
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
@@ -187,7 +195,24 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
           </div>
         </div>
 
-        <div className="table-responsive">
+        <Grid data={this.state.items} style={{ height: 400 }}>
+          <GridColumn field="title" title="title" />
+          <GridColumn field="estimate" title="estimate" width={100}/>
+          <GridColumn
+            field="dateCreated"
+            title="Created"
+            width={160}
+            cell={(props) => {
+              return (
+                <td>
+                  <span className="li-date">{props.dataItem.dateCreated.toDateString()}</span>
+                </td>
+              )
+            }}
+          />
+        </Grid>
+
+        {/* <div className="table-responsive">
           <table className="table table-striped table-sm table-hover">
             <thead>
               <tr>
@@ -202,7 +227,7 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
             </thead>
             <tbody>{rows}</tbody>
           </table>
-        </div>
+        </div> */}
 
         <Modal
           isOpen={this.state.showAddModal}
@@ -266,9 +291,6 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
                     })}
                   </select>
                 </div>
-                <div className="col-sm-10">
-                  <DropDownList data={sizes} style={{zIndex: 999}} />
-                </div>{" "}
               </div>
             </form>
           </ModalBody>
