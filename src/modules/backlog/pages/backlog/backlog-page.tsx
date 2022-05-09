@@ -196,8 +196,59 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
         </div>
 
         <Grid data={this.state.items} style={{ height: 400 }}>
+          <GridColumn
+            field="type"
+            title=" "
+            width={45}
+            cell={(props) => {
+              return (
+                <td>
+                  <img
+                    src={this.getIndicatorImage(props.dataItem)}
+                    alt="data-item"
+                    className="backlog-icon"
+                  />
+                </td>
+              )
+            }}
+          />
+          <GridColumn
+            field="assignee"
+            title="assignee"
+            width={200}
+            cell={(props) => {
+              return (
+                <td>
+                  <div>
+                    <img
+                      src={props.dataItem.assignee.avatar}
+                      alt="avatar"
+                      className="li-avatar rounded mx-auto"
+                    />
+                    <span style={{ marginLeft: 10 }}>
+                      {props.dataItem.assignee.fullName}
+                    </span>
+                  </div>
+                </td>
+              )
+            }}
+          />
           <GridColumn field="title" title="title" />
-          <GridColumn field="estimate" title="estimate" width={100}/>
+          <GridColumn
+            field="priority"
+            title="priority"
+            width={100}
+            cell={(props) => {
+              return (
+                <td>
+                  <span className={'badge '+this.getPriorityClass(props.dataItem)}>
+                    {props.dataItem.priority}
+                  </span>
+                </td>
+              )
+            }}
+          />          
+          <GridColumn field="estimate" title="estimate" width={100} />
           <GridColumn
             field="dateCreated"
             title="Created"
@@ -205,29 +256,14 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
             cell={(props) => {
               return (
                 <td>
-                  <span className="li-date">{props.dataItem.dateCreated.toDateString()}</span>
+                  <span className="li-date">
+                    {props.dataItem.dateCreated.toDateString()}
+                  </span>
                 </td>
               )
             }}
           />
         </Grid>
-
-        {/* <div className="table-responsive">
-          <table className="table table-striped table-sm table-hover">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Assignee</th>
-                <th>Title</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Estimate</th>
-                <th>Created</th>
-              </tr>
-            </thead>
-            <tbody>{rows}</tbody>
-          </table>
-        </div> */}
 
         <Modal
           isOpen={this.state.showAddModal}
