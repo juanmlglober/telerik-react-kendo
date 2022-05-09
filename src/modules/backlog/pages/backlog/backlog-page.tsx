@@ -2,7 +2,7 @@ import React from "react"
 
 import { Input, TextArea } from "@progress/kendo-react-inputs"
 // ES2015 module syntax
-import { DropDownList } from '@progress/kendo-react-dropdowns';
+import { DropDownList } from "@progress/kendo-react-dropdowns"
 
 import { BacklogService } from "../../services/backlog.service"
 import { BacklogRepository } from "../../repositories/backlog.repository"
@@ -164,7 +164,7 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
         </tr>
       )
     })
-
+    const sizes = [ "X-Small", "Small", "Medium", "Large", "X-Large", "2X-Large" ];
     return (
       <React.Fragment>
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
@@ -250,7 +250,7 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
 
               <div className="form-group row">
                 <label className="col-sm-2 col-form-label">Item Type</label>
-                <div className="col-sm-10">
+                <div className="col-sm-12">
                   <select
                     className="form-control"
                     defaultValue={this.state.newItem.typeStr}
@@ -266,6 +266,9 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
                     })}
                   </select>
                 </div>
+                <div className="col-sm-10">
+                  <DropDownList data={sizes} style={{zIndex: 999}} />
+                </div>{" "}
               </div>
             </form>
           </ModalBody>

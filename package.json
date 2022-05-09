@@ -9,6 +9,7 @@
     "@progress/kendo-react-dropdowns": "^5.2.0",
     "@progress/kendo-react-inputs": "^5.2.0",
     "@progress/kendo-react-intl": "^5.2.0",
+    "@progress/kendo-react-layout": "^5.2.0",
     "@progress/kendo-theme-default": "^5.4.1",
     "bootstrap": "4.6.0",
     "react": "17.0.1",
