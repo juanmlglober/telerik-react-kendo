@@ -1,5 +1,7 @@
 import React from "react"
 
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout"
+
 import {
   PtItem,
   PtUser,
@@ -19,6 +21,8 @@ import { PtNewTask } from "../../../../shared/models/dto/pt-new-task"
 import { PtTaskUpdate } from "../../../../shared/models/dto/pt-task-update"
 import { PtItemChitchatComponent } from "../../components/item-chitchat/pt-item-chitchat"
 import { PtNewComment } from "../../../../shared/models/dto/pt-new-comment"
+
+import  "./detail-page.css"
 
 interface DetailPageState {
   item: PtItem | undefined
@@ -83,6 +87,16 @@ export class DetailPage extends React.Component<any, DetailPageState> {
   }
 
   public onScreenSelected(screen: DetailScreenType) {
+    this.setState({
+      selectedDetailsScreen: screen
+    })
+    this.props.history.push(`/detail/${this.itemId}/${screen}`)
+  }
+
+  public onTabSelect(e: any) {
+    const tabNum = e.selected as number
+    const screen = this.screenPositionMap[tabNum] as DetailScreenType
+
     this.setState({
       selectedDetailsScreen: screen
     })
@@ -198,6 +212,10 @@ export class DetailPage extends React.Component<any, DetailPageState> {
     }
   }
 
+  public getSelectedTabNum() {
+    return this.screenPositionMap[this.state.selectedDetailsScreen] as number
+  }
+
   public render() {
     const item = this.state.item
 
@@ -208,54 +226,35 @@ export class DetailPage extends React.Component<any, DetailPageState> {
       <div>
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
           <h1 className="h2">{item.title}</h1>
-          <div className="btn-toolbar mb-2 mb-md-0">
-            <div className="btn-group mr-2">
-              <button
-                type="button"
-                onClick={(e) => this.onScreenSelected("details")}
-                className={
-                  "btn btn-sm btn-outline-secondary " +
-                    this.state.selectedDetailsScreen ===
-                  "details"
-                    ? "active"
-                    : ""
-                }
-              >
-                Details
-              </button>
-
-              <button
-                type="button"
-                onClick={(e) => this.onScreenSelected("tasks")}
-                className={
-                  "btn btn-sm btn-outline-secondary " +
-                    this.state.selectedDetailsScreen ===
-                  "tasks"
-                    ? "active"
-                    : ""
-                }
-              >
-                Tasks
-              </button>
-
-              <button
-                type="button"
-                onClick={(e) => this.onScreenSelected("chitchat")}
-                className={
-                  "btn btn-sm btn-outline-secondary " +
-                    this.state.selectedDetailsScreen ===
-                  "chitchat"
-                    ? "active"
-                    : ""
-                }
-              >
-                Chitchat
-              </button>
-            </div>
-          </div>
         </div>
 
-        {this.screenRender(this.state.selectedDetailsScreen, item)}
+        <TabStrip
+          onSelect={(e) => this.onTabSelect(e)}
+          selected={this.getSelectedTabNum()}
+        >
+          <TabStripTab title="Details">
+            <PtItemDetailsComponent
+              item={item}
+              users$={this.users$}
+              usersRequested={() => this.onUsersRequested()}
+              itemSaved={(item) => this.onItemSaved(item)}
+            />
+          </TabStripTab>
+          <TabStripTab title="Tasks">
+            <PtItemTasksComponent
+              tasks$={this.tasks$}
+              addNewTask={(newTask) => this.onAddNewTask(newTask)}
+              updateTask={(taskUpdate) => this.onUpdateTask(taskUpdate)}
+            />
+          </TabStripTab>
+          <TabStripTab title="Chitchat">
+            <PtItemChitchatComponent
+              comments$={this.comments$}
+              currentUser={this.currentUser!}
+              addNewComment={(newComment) => this.onAddNewComment(newComment)}
+            />
+          </TabStripTab>
+        </TabStrip>
       </div>
     )
   }
