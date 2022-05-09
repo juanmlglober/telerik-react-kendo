@@ -3,8 +3,7 @@ import { Button, ButtonGroup } from "@progress/kendo-react-buttons"
 import { ComboBox, ComboBoxChangeEvent } from "@progress/kendo-react-dropdowns"
 import {
   DashboardFilter,
-  DashboardRepository,
-  FilteredIssues
+  DashboardRepository
 } from "../../repositories/dashboard.repository"
 import { formatDateEnUs } from "../../../../core/helpers/date-utils"
 import { ActiveIssuesComponent } from "../../components/active-issues/active-issues"
@@ -14,7 +13,6 @@ import { PtUserService } from "../../../../core/services/pt-user-service"
 import { Observable } from "rxjs"
 import { PtUser } from "../../../../core/models/domain"
 import { Store } from "../../../../core/state/app-store"
-import { DashBoardChart } from "./dashboard-chart"
 
 interface DateRange {
   dateStart: Date
@@ -25,7 +23,6 @@ interface DashboardPageState {
   statusCounts: StatusCounts
   filter: DashboardFilter
   users: PtUser[]
-  issuesAll: FilteredIssues
 }
 
 export class DashboardPage extends React.Component<any, DashboardPageState> {
@@ -48,11 +45,7 @@ export class DashboardPage extends React.Component<any, DashboardPageState> {
         openItemsCount: 0
       },
       filter: {},
-      users: [],
-      issuesAll: {
-        items: [],
-        categories: []
-      }
+      users: []
     }
   }
 
@@ -98,13 +91,9 @@ export class DashboardPage extends React.Component<any, DashboardPageState> {
   }
 
   private refresh() {
-    Promise.all<StatusCounts, FilteredIssues>([
-      this.dashboardService.getStatusCounts(this.state.filter),
-      this.dashboardService.getFilteredIssues(this.state.filter)
-    ]).then((results) => {
+    this.dashboardService.getStatusCounts(this.state.filter).then((result) => {
       this.setState({
-        statusCounts: results[0],
-        issuesAll: results[1]
+        statusCounts: result
       })
     })
   }
@@ -210,7 +199,6 @@ export class DashboardPage extends React.Component<any, DashboardPageState> {
             <div className="row">
               <div className="col-sm-12">
                 <h3>All issues</h3>
-                <DashBoardChart issuesAll={this.state.issuesAll} />
               </div>
             </div>
           </div>
