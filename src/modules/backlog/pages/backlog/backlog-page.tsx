@@ -4,7 +4,8 @@ import { Input, TextArea } from "@progress/kendo-react-inputs"
 import {
   Grid,
   GridColumn,
-  GridPageChangeEvent
+  GridPageChangeEvent,
+  GridSortChangeEvent
 } from "@progress/kendo-react-grid"
 
 import { BacklogService } from "../../services/backlog.service"
@@ -21,6 +22,7 @@ import { Modal, ModalBody, ModalFooter, Button } from "reactstrap"
 import { PtNewItem } from "../../../../shared/models/dto/pt-new-item"
 import { EMPTY_STRING } from "../../../../core/helpers"
 import { getIndicatorClass } from "../../../../shared/helpers/priority-styling"
+import { SortDescriptor, orderBy, State } from "@progress/kendo-data-query"
 
 interface BacklogPageState {
   currentPreset: PresetType
@@ -29,6 +31,7 @@ interface BacklogPageState {
   newItem: PtNewItem
   take: number
   skip: number
+  sort: SortDescriptor[]
 }
 
 export class BacklogPage extends React.Component<any, BacklogPageState> {
@@ -51,7 +54,8 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
       showAddModal: false,
       newItem: this.initModalNewItem(),
       skip: 0,
-      take: 10
+      take: 10,
+      sort: [{ field: "title", dir: "asc" }]
     }
   }
 
@@ -139,6 +143,12 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
     })
   }
 
+  private onSortChange(event: GridSortChangeEvent) {
+    this.setState({
+      sort: event.sort
+    })
+  }
+
   public render() {
     const rows = this.state.items.map((i) => {
       return (
@@ -184,9 +194,12 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
       )
     })
 
-    const gridData = this.state.items.slice(
-      this.state.skip,
-      this.state.take + this.state.skip
+    const gridData = orderBy(
+      this.state.items.slice(
+        this.state.skip,
+        this.state.take + this.state.skip
+      ),
+      this.state.sort
     )
 
     return (
@@ -219,6 +232,9 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
           total={this.state.items.length}
           pageable={true}
           onPageChange={(e) => this.onPageChange(e)}
+          sort={this.state.sort}
+          sortable={true}
+          onSortChange={(e) => this.onSortChange(e)}
         >
           <GridColumn
             field="type"
