@@ -6,6 +6,7 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridPageChangeEvent,
+  GridRowClickEvent,
   GridSortChangeEvent
 } from "@progress/kendo-react-grid"
 
@@ -23,7 +24,12 @@ import { Modal, ModalBody, ModalFooter, Button } from "reactstrap"
 import { PtNewItem } from "../../../../shared/models/dto/pt-new-item"
 import { EMPTY_STRING } from "../../../../core/helpers"
 import { getIndicatorClass } from "../../../../shared/helpers/priority-styling"
-import { SortDescriptor, orderBy, State, process } from "@progress/kendo-data-query"
+import {
+  SortDescriptor,
+  orderBy,
+  State,
+  process
+} from "@progress/kendo-data-query"
 
 interface BacklogPageState {
   currentPreset: PresetType
@@ -99,6 +105,11 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
     this.props.history.push(`/detail/${item.id}`)
   }
 
+  private onSelectionChange(event: GridRowClickEvent) {
+    const selItem = event.dataItem as PtItem
+    this.props.history.push(`/detail/${selItem.id}`)
+  }
+  
   private toggleModal() {
     this.setState({
       showAddModal: !this.state.showAddModal
@@ -137,7 +148,7 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
     }
   }
 
-  private onDataStateChange(event: GridDataStateChangeEvent ){
+  private onDataStateChange(event: GridDataStateChangeEvent) {
     this.setState({
       gridState: event.dataState
     })
@@ -222,6 +233,7 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
           sort={this.state.gridState.sort}
           sortable={true}
           onDataStateChange={(e) => this.onDataStateChange(e)}
+          onRowClick={(e) => this.onSelectionChange(e)}
         >
           <GridColumn
             field="type"
