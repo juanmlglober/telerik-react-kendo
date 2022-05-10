@@ -4,8 +4,7 @@ import { Input, TextArea } from "@progress/kendo-react-inputs"
 import {
   Grid,
   GridColumn,
-  GridCell,
-  GridCellProps
+  GridPageChangeEvent
 } from "@progress/kendo-react-grid"
 
 import { BacklogService } from "../../services/backlog.service"
@@ -28,6 +27,8 @@ interface BacklogPageState {
   items: PtItem[]
   showAddModal: boolean
   newItem: PtNewItem
+  take: number
+  skip: number
 }
 
 export class BacklogPage extends React.Component<any, BacklogPageState> {
@@ -48,7 +49,9 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
       currentPreset: preset ? preset : "open",
       items: [],
       showAddModal: false,
-      newItem: this.initModalNewItem()
+      newItem: this.initModalNewItem(),
+      skip: 0,
+      take: 10
     }
   }
 
@@ -129,6 +132,13 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
     }
   }
 
+  private onPageChange(event: GridPageChangeEvent) {
+    this.setState({
+      skip: event.page.skip,
+      take: event.page.take
+    })
+  }
+
   public render() {
     const rows = this.state.items.map((i) => {
       return (
@@ -173,6 +183,12 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
         </tr>
       )
     })
+
+    const gridData = this.state.items.slice(
+      this.state.skip,
+      this.state.take + this.state.skip
+    )
+
     return (
       <React.Fragment>
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
@@ -195,7 +211,15 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
           </div>
         </div>
 
-        <Grid data={this.state.items} style={{ height: 400 }}>
+        <Grid
+          data={gridData}
+          style={{ height: 400 }}
+          take={this.state.take}
+          skip={this.state.skip}
+          total={this.state.items.length}
+          pageable={true}
+          onPageChange={(e) => this.onPageChange(e)}
+        >
           <GridColumn
             field="type"
             title=" "
@@ -241,13 +265,15 @@ export class BacklogPage extends React.Component<any, BacklogPageState> {
             cell={(props) => {
               return (
                 <td>
-                  <span className={'badge '+this.getPriorityClass(props.dataItem)}>
+                  <span
+                    className={"badge " + this.getPriorityClass(props.dataItem)}
+                  >
                     {props.dataItem.priority}
                   </span>
                 </td>
               )
             }}
-          />          
+          />
           <GridColumn field="estimate" title="estimate" width={100} />
           <GridColumn
             field="dateCreated"
